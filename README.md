@@ -31,7 +31,7 @@ They can be found at:
 ```
 
 ### Error and redirects
-You can manually sset the error code or redirect to url via the route function.
+You can manually set the error code or redirect to url via the route function.
 ```php
 \Routes\add(\Routes\UnknownPage, function($args, &$error, &$redirectTo) {
   $error = \Routes\MovedUrl;
