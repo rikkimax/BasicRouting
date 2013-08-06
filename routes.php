@@ -61,6 +61,7 @@
 	 * Arguments:
 	 * urlMatch: The url match associated with this function
 	 * func: The function that will be called
+	 * file: A file that is loaded instead of a function. Global values are replaced instead of arguments.
 	 *
 	 * Example usage:
 	 * \Routes\add('/test/[:name]/[:t2]', function($args) {
@@ -78,10 +79,13 @@
 	 * \Routes\add(\Routes\Ok, function(&$error, &$redirectTo) {
 	 *    echo 'GOT error 400';
 	 * });
+	 * \Routes\add('/test/[:name]/[:t2]', function($args) {
+	 *    print_r($args);
+	 * }, 'afile.php');
 	 */
-	function add($urlMatch, $func) {
+	function add($urlMatch, $func=null, $file=null) {
 		global $routes;
-		$routes[$urlMatch] = $func;
+		$routes[$urlMatch] = array($func, $file);
 	}
 	
 	/*
@@ -98,11 +102,20 @@
 		global $routes;
 		$error = UnknownPage;
 		$redirectTo = '';
-		foreach($routes as $urlMatch => $func) {
+		foreach($routes as $urlMatch => $vals) {
 			$args = match($url, $urlMatch);
 			if ($args !== FALSE) {
 				$error = Ok;
-				$func($args, $error, $redirectTo);
+				if ($vals[0] !== null)
+					$vals[0]($args, $error, $redirectTo);
+				if ($vals[1] !== null) {
+					$_GLOBALS['args'] = $args;
+					$_GLOBALS['error'] = $error;
+					$_GLOBALS['redirectTo'] = $redirectTo;
+					include_once($vals[1]);
+					$error = $_GLOBALS['error'];
+					$redirectTo = $_GLOBALS['redirectTo'];
+				}
 				break;
 			}
 		}
