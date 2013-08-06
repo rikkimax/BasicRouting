@@ -13,6 +13,16 @@ A very basic routing framework for php
 });
 ```
 
+### Loading a file based on a route
+The file which is ran occurs after the function calling.
+All arguments that would have been passed to the function are set as global values for the file.
+Function and file can be null for none.
+```php
+\Routes\add('/say/hello/[:name]', function($args) {
+  echo 'Hello ' . $args['name'] . '!';
+}, 'afile.php');
+```
+
 ### Special routes
 Special routes are the error codes given for http.
 E.g. 404, 403, 500 and 200.
