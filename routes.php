@@ -30,7 +30,7 @@
 	const Ok = 200;
 	const InternalError = 500;
 	const UnknownPage = 404;
-	const MovedUrl = 403;
+	const MovedUrl = 301;
 	
 	/*
 	 * Adds a route.
