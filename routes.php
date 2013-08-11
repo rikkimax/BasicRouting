@@ -67,7 +67,7 @@
 	 * \Routes\add('/test/[:name]/[:t2]', function($args) {
 	 *    print_r($args);
 	 * });
-	 * \Routes\add('/test/[:name]/[:t2]', function($args, &$error, &$redirectTo) {
+	 * \Routes\add('/test/[:name]/[:t2]', function($args, &$error, &$redirectTo, &$contentType) {
 	 *    print_r($args);
          *    $error = \Routes\InternalError;
 	 *    $error = \Routes\Ok;
@@ -76,7 +76,7 @@
 	 *
 	 *    $redirectTo = 'http://example.com';
 	 * });
-	 * \Routes\add(\Routes\Ok, function(&$error, &$redirectTo) {
+	 * \Routes\add(\Routes\Ok, function(&$error, &$redirectTo, &$contentType) {
 	 *    echo 'GOT error 400';
 	 * });
 	 * \Routes\add('/test/[:name]/[:t2]', function($args) {
@@ -102,19 +102,22 @@
 		global $routes;
 		$error = UnknownPage;
 		$redirectTo = '';
+		$contentType = '';
 		foreach($routes as $urlMatch => $vals) {
 			$args = match($url, $urlMatch);
 			if ($args !== FALSE) {
 				$error = Ok;
 				if ($vals[0] !== null)
-					$vals[0]($args, $error, $redirectTo);
+					$vals[0]($args, $error, $redirectTo, $contentType);
 				if ($vals[1] !== null) {
 					$_GLOBALS['args'] = $args;
 					$_GLOBALS['error'] = $error;
 					$_GLOBALS['redirectTo'] = $redirectTo;
+					$_GLOBALS['contentType'] = $contentType;
 					include_once($vals[1]);
 					$error = $_GLOBALS['error'];
 					$redirectTo = $_GLOBALS['redirectTo'];
+					$_GLOBALS['contentType'] = $contentType;
 				}
 				break;
 			}
@@ -128,6 +131,10 @@
 		
 		if ($redirectTo !== '') {
 			header('Location: ' . $redirectTo);
+		}
+		
+		if ($contentType !== '') {
+			header('Content-type: ' . $contentType);
 		}
 	}
 ?>
