@@ -43,12 +43,14 @@ They can be found at:
 ### Error and redirects
 You can manually set the error code or redirect to url via the route function.
 ```php
-\Routes\add(\Routes\UnknownPage, function($args, &$error, &$redirectTo) {
+\Routes\add(\Routes\UnknownPage, function($args, &$error, &$redirectTo, &$contentType) {
   $error = \Routes\MovedUrl;
   $redirectTo = '/actual';
 });
 ```
 
+### Content type
+You can set the content type using &$contentType.
 
 ## Running the routes
 ```php
