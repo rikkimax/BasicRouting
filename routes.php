@@ -50,6 +50,7 @@
 	}
 	
 	$routes = array();
+	const Ignore = 0;
 	const Ok = 200;
 	const InternalError = 500;
 	const UnknownPage = 404;
@@ -127,7 +128,8 @@
 			$routes[$error]($error, $redirectTo);	
 		}
 		
-		http_response_code($error);
+		if ($error !== Ignore)
+			http_response_code($error);
 		
 		if ($redirectTo !== '') {
 			header('Location: ' . $redirectTo);
